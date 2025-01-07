@@ -1,3 +1,0 @@
-/home/sasha/cxxsols/cmake-build-debug/CMakeFiles/cxxsols.dir
-/home/sasha/cxxsols/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/sasha/cxxsols/cmake-build-debug/CMakeFiles/rebuild_cache.dir

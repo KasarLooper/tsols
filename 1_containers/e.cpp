@@ -1,78 +1,62 @@
 #include <iostream>
-#include <vector>
+#include <queue>
+#include <deque>
 
 using namespace std;
-
-class MinStack {
-private:
-    vector<long long> base;
-    vector<long long> mins;
-
-public:
-    void push(long long x) {
-        base.push_back(x);
-        long long min_el = x;
-        if (!mins.empty() && mins.back() < x)
-            min_el = mins.back();
-        mins.push_back(min_el);
-    }
-
-    long long pop() {
-        long long res = base.back();
-        base.pop_back();
-        mins.pop_back();
-        return res;
-    }
-
-    long long min() {
-        return mins.back();
-    }
-
-    long long get(int i) {
-        return base[i];
-    }
-
-    int size() {
-        return base.size();
-    }
-};
+typedef long long ll;
 
 class MinQueue {
 private:
-    MinStack in, out;
+    deque<ll> q;
+    queue<int> idx;
+
+    deque<ll> mins;
+    deque<int> midx;
+
+    int cur_i = 0;
 
 public:
-    void push(long long x) {
-        in.push(x);
-    }
+    void push(ll x) {
+        q.push_back(x);
+        idx.push(cur_i);
 
-    long long pop() {
-        if (out.size() == 0) {
-            while (in.size() > 0) {
-                out.push(in.pop());
-            }
+        while (!mins.empty() && x < mins.back()) {
+            mins.pop_back();
+            midx.pop_back();
         }
-        return out.pop();
+
+        mins.push_back(x);
+        midx.push_back(cur_i++);
     }
 
-    long long min() {
-        if (in.size() == 0) return out.min();
-        if (out.size() == 0) return in.min();
-        long long a = in.min();
-        long long b = out.min();
-        if (a <= b) return a;
-        return b;
+    ll pop() {
+        ll deleting = q.front();
+
+        if (mins.front() == deleting
+            && idx.front() == midx.front()) {
+            mins.pop_front();
+            midx.pop_front();
+        }
+
+        q.pop_front();
+        idx.pop();
+
+        return deleting;
     }
 
-    long long get(int i) {
-        int n = in.size();
-        int m = out.size();
-        if (n == 0 || i < m) return out.get(m - 1 - i);
-        return in.get(i + m);
+    ll min() {
+        return mins.front();
+    }
+
+    ll get(int i) {
+        return q[i];
     }
 };
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+
     int q;
     cin >> q;
     MinQueue mq;
@@ -81,24 +65,24 @@ int main() {
         cin >> op;
         switch (op)
         {
-            case 1:
-                long long x;
-                cin >> x;
-                mq.push(x);
-                break;
-            case 2:
-                cout << mq.pop() << endl;
-                break;
-            case 3:
-                int i;
-                cin >> i;
-                cout << mq.get(i - 1) << endl;
-                break;
-            case 4:
-                cout << mq.min() << endl;
-                break;
-            default:
-                break;
+        case 1:
+            ll x;
+            cin >> x;
+            mq.push(x);
+            break;
+        case 2:
+            cout << mq.pop() << '\n';
+            break;
+        case 3:
+            int i;
+            cin >> i;
+            cout << mq.get(i - 1) << '\n';
+            break;
+        case 4:
+            cout << mq.min() << '\n';
+            break;
+        default:
+            break;
         }
     }
 }

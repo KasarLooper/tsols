@@ -1,37 +1,31 @@
 #include <iostream>
+#include <vector>
 #include <set>
-#include <algorithm>
 
 using namespace std;
 
-void fastIO() {
+int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
-}
-
-int main() {
-	fastIO();
 
 	int n;
 	cin >> n;
 
 	set<int> free;
-	for (int i = 1; i <= 100000; i++) {
+	for (int i = 1; i <= 2e5; i++) {
 		free.insert(i);
 	}
 
+	int x;
 	for (int i = 0; i < n; i++) {
-		int a;
-		cin >> a;
-		if (a < 0) {
-			free.insert(-a);
+		cin >> x;
+		if (x > 0) {
+			auto it = free.lower_bound(x); // Use lower bound from set for eficiency!!!
+			cout << *it << '\n';
+			free.erase(it);
 		}
 		else {
-			auto it = lower_bound(free.begin(), free.end(), a);
-			cout << *it << '\n';
-			if (*it == *free.rbegin())
-				free.insert(*it + 1);
-	    		free.erase(it);
+			free.insert(-x);
 		}
 	}
 }

@@ -1,48 +1,60 @@
 #include <iostream>
 #include <vector>
 #include <unordered_set>
+#include <algorithm>
 
 using namespace std;
 
-void fastIO() {
-        ios_base::sync_with_stdio(false);
-        cin.tie(nullptr);
-}
-
 int main() {
-        fastIO();
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-        int n, k, p;
-        cin >> n >> k >> p;
+    int n, k, p;
+    cin >> n >> k >> p;
 
-        vector<int> usingg(n + 1, 0);
-        vector<int> a(p);
-        for (int i = 0; i < p; i++) {
-                cin >> a[i];
-                usingg[a[i]]++;
+    vector<int> a(p);
+    for (int i = 0; i < p; i++) {
+        cin >> a[i];
+    }
+
+    vector<vector<int>> idx(n + 1, vector<int>());
+    for (int i = 0; i < p; i++) {
+        idx[a[i]].push_back(i);
+    }
+
+    unordered_set<int> floor;
+    int cnt = 0;
+
+    for (int i = 0; i < p; i++) {
+        int cur = a[i];
+
+        if (floor.find(cur) != floor.end()) {
+            continue;
         }
 
-        int cnt = 0;
-        unordered_set<int> floor;
-        for (int i = 0; i < p; i++) {
-                cnt++;
-                usingg[a[i]]--;
-                if (floor.size() >= k) {
-                        cnt++;
-                        int rnd = -1;
-                        for (auto el : floor) {
-                                rnd = el;
-                                if (usingg[el] <= 0) {
-                                        rnd = -1;
-                                        floor.erase(el);
-					break;
-                                }
-                        }
-                        if (rnd != -1)
-                                floor.erase(rnd);
+        if (floor.size() >= k) {
+            int rem = -1;
+            int mx_j = -1;
+
+            for (const auto& car : floor) {
+                cout << car << ' ' << idx.size() << '\n';
+
+                int cur_j = *lower_bound(
+                    idx[car].begin(), idx[car].end(), i);
+
+                if (cur_j > mx_j) {
+                    mx_j = cur_j;
+                    rem = car;
                 }
-                floor.insert(a[i]);
+            }
+
+            floor.erase(rem);
         }
 
-        cout << cnt;
+        floor.insert(cur);
+        cnt++;
+    }
+
+    cout << cnt << '\n';
+    return 0;
 }
